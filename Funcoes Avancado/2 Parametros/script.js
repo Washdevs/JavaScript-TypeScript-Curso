@@ -38,3 +38,4 @@ function funcao(a,b = 2){ // Forma moderna
     console.log(a + b)
 }
 funcao(2, undefined) // não posso entregar valor vazio ao parametro mas posso dar undefined que ele assumirá apenas o valor do parametro
+// se usar null ele assume o null como zero 0
