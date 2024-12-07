@@ -28,14 +28,48 @@ nos argumentos que não existem como undefined */
 
 /*Forma antiga 
 function funcao(a,b){
-    b = b || 0; //b tem algum valor? se não é 0 valor padrão + o argumento no caso resultado é 2
+     b = b || 0; //b tem algum valor? se não é 0 valor padrão + o argumento no caso resultado é 2
     console.log(a + b)
 }
 funcao(2) // qaundo o valor não é uma conta válida ele da NaN
 */
 
-function funcao(a,b = 2){ // Forma moderna 
-    console.log(a + b)
+// function funcao(a,b = 2, c = 1){ // Forma moderna 
+//     console.log(a + b + c)
+// }
+// funcao(2, undefined, 2) // não posso entregar valor vazio ao parametro mas posso dar undefined que ele assumirá apenas o valor do parametro
+// Se usar null ele assume o null como zero 0
+// O valor do argumento é o priorizado enquanto o do parâmetro é apenas um valor padrão
+
+
+// function funcao({nome, sobrenome, idade}){ //Isto é desestruturação
+//     console.log(nome, sobrenome, idade)
+// }
+// funcao({nome:'Lucas', sobrenome:'Otávio', idade:20}); // Os argumentos são os dados passados para os parametros //desta forma é chamada de valor literal
+// mandar o objeto direto como {nome:'Lucas', sobrenome:'Otávio', idade:20} funciona da mesma forma que let objeto = {nome:'Lucas', sobrenome:'Otávio', idade:20} funcao(objeto)
+
+// function funcao([valor1, valor2, valor3]){ //Isto é desestruturação
+//     console.log(valor1, valor2, valor3)
+// }
+// funcao(['Luiz', 'Miranda', 30]);
+
+// function funcao(operador, acumulador, ...numeros){ //... Rest operator o resto dos argumentos ficam dentro de um array, e o Rest deve ser o ultimo parametro 
+//     for(let num of numeros){ //Diferenças entre os For, For in é indice, For of é os valores, foreach numeros.forEach((numero, indice)
+//     if(operador === '+')acumulador += num;
+//     else if(operador === '-')acumulador -= num;
+//     else if(operador === '/')acumulador /= num;
+//       else if(operador === '*')acumulador *= num;
+//     }
+// //     console.log(acumulador)
+// }
+// funcao('*', 0, 20, 30, 40, 50);
+
+// const conta = (...args) => { // usando rest operator é a mesma coisa de usar arguments pois arguments não é possível se for arrow function
+//     console.log(args)
+// }
+// conta('*', 0, 20, 30, 40, 50);
+
+const conta = (...args) => { // usando rest operator é a mesma coisa de usar arguments pois arguments não é possível se for arrow function
+    console.log(args)
 }
-funcao(2, undefined) // não posso entregar valor vazio ao parametro mas posso dar undefined que ele assumirá apenas o valor do parametro
-// se usar null ele assume o null como zero 0
+conta('*', 0, 20, 30, 40, 50);
