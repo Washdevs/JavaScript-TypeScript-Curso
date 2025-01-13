@@ -53,8 +53,29 @@ function* geradora4() {
 }
 
 const g4 = geradora4();
-console.log(g4.next().value);
-for (let valor of g4) {
-  // for of é a mesma coisa que um foreach
-  console.log(valor);
+// console.log(g4.next().value);
+// for (let valor of g4) {
+//   // for of é a mesma coisa que um foreach
+//   console.log(valor);
+// }
+function* geradora5() {
+  yield function () {
+    console.log("Vim do y1");
+  };
+
+  yield function () {
+    console.log("Vim do return");
+  };
+
+  yield function () {
+    console.log("Vim do y2");
+  };
 }
+
+const geradora6 = geradora5();
+const func1 = geradora6.next().value;
+const func2 = geradora6.next().value;
+const func3 = geradora6.next().value;
+func1();
+func2();
+func3();
