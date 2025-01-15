@@ -48,3 +48,8 @@ let frutasMaiusculas = frutas.map(function (fruta) {
   return fruta.toUpperCase();
 });
 console.log(frutasMaiusculas); // ["ABACAXI", "MORANGO", "LARANJA"]
+
+let Cavalos = ["Mancha", "Bruto", "King", "Cartucho", "Bala", "Cromo"];
+
+let Cavalo = Cavalos[1];
+console.log(Cavalo);

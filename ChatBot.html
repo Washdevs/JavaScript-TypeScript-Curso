@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot Flow Builder</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      #container {
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+      }
+      #flow-builder {
+        width: 70%;
+        border-right: 2px solid #ccc;
+        position: relative;
+        overflow: hidden;
+      }
+      #controls {
+        width: 30%;
+        padding: 20px;
+      }
+      .node {
+        position: absolute;
+        padding: 10px;
+        background: #007bff;
+        color: white;
+        border-radius: 5px;
+        cursor: move;
+      }
+      .node .title {
+        font-weight: bold;
+      }
+      .node .content {
+        margin-top: 5px;
+      }
+      #flow-builder canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="flow-builder">
+        <canvas id="connections"></canvas>
+      </div>
+      <div id="controls">
+        <h2>Adicionar Fluxo</h2>
+        <label for="node-title">Título:</label>
+        <input type="text" id="node-title" placeholder="Pergunta ou Resposta" />
+        <label for="node-content">Conteúdo:</label>
+        <input type="text" id="node-content" placeholder="Mensagem ou Opções" />
+        <button id="add-node">Adicionar</button>
+        <hr />
+        <button id="save-flow">Salvar Fluxo</button>
+      </div>
+    </div>
+
+    <script>
+      const flowBuilder = document.getElementById("flow-builder");
+      const canvas = document.getElementById("connections");
+      const ctx = canvas.getContext("2d");
+      const addNodeButton = document.getElementById("add-node");
+      const saveFlowButton = document.getElementById("save-flow");
+      const nodeTitleInput = document.getElementById("node-title");
+      const nodeContentInput = document.getElementById("node-content");
+
+      canvas.width = flowBuilder.offsetWidth;
+      canvas.height = flowBuilder.offsetHeight;
+
+      let nodes = [];
+      let connections = [];
+
+      function createNode(title, content, x = 50, y = 50) {
+        const node = document.createElement("div");
+        node.className = "node";
+        node.style.left = `${x}px`;
+        node.style.top = `${y}px`;
+        node.draggable = true;
+
+        node.innerHTML = `
+        <div class="title">${title}</div>
+        <div class="content">${content}</div>
+      `;
+
+        node.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData(
+            "text/plain",
+            JSON.stringify({ x: e.offsetX, y: e.offsetY })
+          );
+        });
+
+        node.addEventListener("dragend", (e) => {
+          const offset = JSON.parse(e.dataTransfer.getData("text/plain"));
+          node.style.left = `${e.pageX - offset.x}px`;
+          node.style.top = `${e.pageY - offset.y}px`;
+          redrawConnections();
+        });
+
+        flowBuilder.appendChild(node);
+        nodes.push(node);
+      }
+
+      function redrawConnections() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 2;
+
+        connections.forEach(([from, to]) => {
+          const fromRect = from.getBoundingClientRect();
+          const toRect = to.getBoundingClientRect();
+
+          const fromX =
+            fromRect.left + fromRect.width / 2 - flowBuilder.offsetLeft;
+          const fromY =
+            fromRect.top + fromRect.height / 2 - flowBuilder.offsetTop;
+
+          const toX = toRect.left + toRect.width / 2 - flowBuilder.offsetLeft;
+          const toY = toRect.top + toRect.height / 2 - flowBuilder.offsetTop;
+
+          ctx.beginPath();
+          ctx.moveTo(fromX, fromY);
+          ctx.lineTo(toX, toY);
+          ctx.stroke();
+        });
+      }
+
+      addNodeButton.addEventListener("click", () => {
+        const title = nodeTitleInput.value.trim();
+        const content = nodeContentInput.value.trim();
+
+        if (title && content) {
+          createNode(title, content);
+          nodeTitleInput.value = "";
+          nodeContentInput.value = "";
+        } else {
+          alert("Por favor, preencha o título e o conteúdo do nó.");
+        }
+      });
+
+      saveFlowButton.addEventListener("click", () => {
+        const flow = nodes.map((node) => ({
+          title: node.querySelector(".title").innerText,
+          content: node.querySelector(".content").innerText,
+          x: parseInt(node.style.left, 10),
+          y: parseInt(node.style.top, 10),
+        }));
+
+        console.log("Fluxo salvo:", JSON.stringify(flow, null, 2));
+        alert("Fluxo salvo! Verifique o console para os detalhes.");
+      });
+
+      // Exemplo inicial
+      createNode("Bem-vindo", "Olá! Como posso ajudar você?");
+    </script>
+  </body>
+</html>
