@@ -11,28 +11,9 @@ function criaCalculadora() {
 
     pressionaTeclas() {
       document.addEventListener("keyup", (e) => {
+        e.preventDefault(); // previne o comportamento padrão do navegador
         const tecla = e.key;
-        if (
-          [
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            ".",
-            "(",
-            ")",
-            "+",
-            "-",
-            "*",
-            "/",
-          ].includes(tecla)
-        ) {
+        if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "(", ")", "+", "-", "*", "/"].includes(tecla)) {
           this.btnParaDisplay(tecla);
         }
         if (tecla === "Backspace") {
@@ -41,11 +22,11 @@ function criaCalculadora() {
         if (tecla === "Enter" || tecla === "=") {
           this.realizaConta();
         }
+        e.blur();
       });
     },
 
     realizaConta() {
-      55;
       let conta = this.display.value;
       try {
         this.display.value = eval(conta); // Use o valor do display
@@ -93,7 +74,7 @@ function criaCalculadora() {
     btnParaDisplay(valor) {
       //recebe o valor como parametro
       this.display.value += valor; //mostra no display o valor que tem no button
-    },
+    }
   };
 }
 
