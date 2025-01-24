@@ -10,21 +10,25 @@
         margin: 0;
         padding: 0;
       }
+
       #container {
         display: flex;
         flex-direction: row;
         height: 100vh;
       }
+
       #flow-builder {
         width: 70%;
         border-right: 2px solid #ccc;
         position: relative;
         overflow: hidden;
       }
+
       #controls {
         width: 30%;
         padding: 20px;
       }
+
       .node {
         position: absolute;
         padding: 10px;
@@ -33,12 +37,15 @@
         border-radius: 5px;
         cursor: move;
       }
+
       .node .title {
         font-weight: bold;
       }
+
       .node .content {
         margin-top: 5px;
       }
+
       #flow-builder canvas {
         position: absolute;
         top: 0;
@@ -46,6 +53,7 @@
       }
     </style>
   </head>
+
   <body>
     <div id="container">
       <div id="flow-builder">
