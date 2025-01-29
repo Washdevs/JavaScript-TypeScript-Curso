@@ -1,172 +1,129 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chatbot Flow Builder</title>
+    <title>Criador de Fluxos de Bot</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-      }
-
-      #container {
-        display: flex;
-        flex-direction: row;
-        height: 100vh;
-      }
-
-      #flow-builder {
-        width: 70%;
-        border-right: 2px solid #ccc;
+      #construtorDeFluxo {
         position: relative;
-        overflow: hidden;
+        width: 100%;
+        height: 600px;
+        border: 1px solid #000;
       }
-
-      #controls {
-        width: 30%;
-        padding: 20px;
-      }
-
-      .node {
+      .nodo {
         position: absolute;
+        width: 150px;
+        height: 100px;
+        border: 1px solid #000;
+        background-color: #f0f0f0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         padding: 10px;
-        background: #007bff;
-        color: white;
-        border-radius: 5px;
-        cursor: move;
+        box-sizing: border-box;
       }
-
-      .node .title {
-        font-weight: bold;
+      .nodo input,
+      .nodo textarea {
+        width: 100%;
       }
-
-      .node .content {
-        margin-top: 5px;
-      }
-
-      #flow-builder canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
+      .nodo .saida {
+        cursor: pointer;
+        text-align: center;
+        background-color: #ccc;
+        padding: 5px;
       }
     </style>
   </head>
-
   <body>
-    <div id="container">
-      <div id="flow-builder">
-        <canvas id="connections"></canvas>
-      </div>
-      <div id="controls">
-        <h2>Adicionar Fluxo</h2>
-        <label for="node-title">Título:</label>
-        <input type="text" id="node-title" placeholder="Pergunta ou Resposta" />
-        <label for="node-content">Conteúdo:</label>
-        <input type="text" id="node-content" placeholder="Mensagem ou Opções" />
-        <button id="add-node">Adicionar</button>
-        <hr />
-        <button id="save-flow">Salvar Fluxo</button>
-      </div>
-    </div>
+    <button id="adicionarNodoBtn">Adicionar Grupo de Fluxo</button>
+    <div id="construtorDeFluxo"></div>
+    <canvas id="canvasDeFluxo"></canvas>
 
     <script>
-      const flowBuilder = document.getElementById("flow-builder");
-      const canvas = document.getElementById("connections");
+      const construtorDeFluxo = document.getElementById("construtorDeFluxo");
+      const canvas = document.getElementById("canvasDeFluxo");
       const ctx = canvas.getContext("2d");
-      const addNodeButton = document.getElementById("add-node");
-      const saveFlowButton = document.getElementById("save-flow");
-      const nodeTitleInput = document.getElementById("node-title");
-      const nodeContentInput = document.getElementById("node-content");
+      const nodos = [];
+      const conexoes = [];
+      let saidaSelecionada = null;
 
-      canvas.width = flowBuilder.offsetWidth;
-      canvas.height = flowBuilder.offsetHeight;
+      canvas.width = construtorDeFluxo.clientWidth;
+      canvas.height = construtorDeFluxo.clientHeight;
 
-      let nodes = [];
-      let connections = [];
+      document
+        .getElementById("adicionarNodoBtn")
+        .addEventListener("click", () => {
+          adicionarNodo();
+        });
 
-      function createNode(title, content, x = 50, y = 50) {
-        const node = document.createElement("div");
-        node.className = "node";
-        node.style.left = `${x}px`;
-        node.style.top = `${y}px`;
-        node.draggable = true;
-
-        node.innerHTML = `
-        <div class="title">${title}</div>
-        <div class="content">${content}</div>
+      function adicionarNodo() {
+        const nodo = document.createElement("div");
+        nodo.className = "nodo";
+        nodo.style.left = "50px";
+        nodo.style.top = "50px";
+        nodo.innerHTML = `
+        <input type="text" placeholder="Ação">
+        <textarea placeholder="Conteúdo"></textarea>
+        <div class="saida">Saída</div>
       `;
-
-        node.addEventListener("dragstart", (e) => {
-          e.dataTransfer.setData(
-            "text/plain",
-            JSON.stringify({ x: e.offsetX, y: e.offsetY })
-          );
+        nodo.querySelector(".saida").addEventListener("click", () => {
+          if (saidaSelecionada) {
+            conexoes.push([saidaSelecionada, nodo]);
+            saidaSelecionada = null;
+            redesenharConexoes();
+          } else {
+            saidaSelecionada = nodo;
+          }
         });
-
-        node.addEventListener("dragend", (e) => {
-          const offset = JSON.parse(e.dataTransfer.getData("text/plain"));
-          node.style.left = `${e.pageX - offset.x}px`;
-          node.style.top = `${e.pageY - offset.y}px`;
-          redrawConnections();
-        });
-
-        flowBuilder.appendChild(node);
-        nodes.push(node);
+        nodo.draggable = true;
+        nodo.ondragstart = (e) => {
+          e.dataTransfer.setData("text/plain", null);
+          nodo.classList.add("arrastando");
+        };
+        nodo.ondragend = () => {
+          nodo.classList.remove("arrastando");
+          redesenharConexoes();
+        };
+        nodo.ondrag = (e) => {
+          if (e.clientX > 0 && e.clientY > 0) {
+            nodo.style.left = `${
+              e.clientX - construtorDeFluxo.offsetLeft - 75
+            }px`;
+            nodo.style.top = `${
+              e.clientY - construtorDeFluxo.offsetTop - 50
+            }px`;
+          }
+        };
+        construtorDeFluxo.appendChild(nodo);
+        nodos.push(nodo);
       }
 
-      function redrawConnections() {
+      function redesenharConexoes() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.strokeStyle = "#000";
         ctx.lineWidth = 2;
 
-        connections.forEach(([from, to]) => {
-          const fromRect = from.getBoundingClientRect();
-          const toRect = to.getBoundingClientRect();
+        conexoes.forEach(([de, para]) => {
+          const deRect = de.getBoundingClientRect();
+          const paraRect = para.getBoundingClientRect();
 
-          const fromX =
-            fromRect.left + fromRect.width / 2 - flowBuilder.offsetLeft;
-          const fromY =
-            fromRect.top + fromRect.height / 2 - flowBuilder.offsetTop;
+          const deX =
+            deRect.left + deRect.width / 2 - construtorDeFluxo.offsetLeft;
+          const deY =
+            deRect.top + deRect.height / 2 - construtorDeFluxo.offsetTop;
 
-          const toX = toRect.left + toRect.width / 2 - flowBuilder.offsetLeft;
-          const toY = toRect.top + toRect.height / 2 - flowBuilder.offsetTop;
+          const paraX =
+            paraRect.left + paraRect.width / 2 - construtorDeFluxo.offsetLeft;
+          const paraY =
+            paraRect.top + paraRect.height / 2 - construtorDeFluxo.offsetTop;
 
           ctx.beginPath();
-          ctx.moveTo(fromX, fromY);
-          ctx.lineTo(toX, toY);
+          ctx.moveTo(deX, deY);
+          ctx.lineTo(paraX, paraY);
           ctx.stroke();
         });
       }
-
-      addNodeButton.addEventListener("click", () => {
-        const title = nodeTitleInput.value.trim();
-        const content = nodeContentInput.value.trim();
-
-        if (title && content) {
-          createNode(title, content);
-          nodeTitleInput.value = "";
-          nodeContentInput.value = "";
-        } else {
-          alert("Por favor, preencha o título e o conteúdo do nó.");
-        }
-      });
-
-      saveFlowButton.addEventListener("click", () => {
-        const flow = nodes.map((node) => ({
-          title: node.querySelector(".title").innerText,
-          content: node.querySelector(".content").innerText,
-          x: parseInt(node.style.left, 10),
-          y: parseInt(node.style.top, 10),
-        }));
-
-        console.log("Fluxo salvo:", JSON.stringify(flow, null, 2));
-        alert("Fluxo salvo! Verifique o console para os detalhes.");
-      });
-
-      // Exemplo inicial
-      createNode("Bem-vindo", "Olá! Como posso ajudar você?");
     </script>
   </body>
 </html>
