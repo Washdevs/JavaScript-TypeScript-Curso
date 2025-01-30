@@ -62,6 +62,34 @@ produto.desconto(10);
 produto.aumento(10);
 console.log(produto);
 
-p1.aumento(2);
-p1.desconto(1);
+p1.desconto(10);
+p1.aumento(1);
 console.log(p1);
+
+//É possível criar e ja setar o prototype dele na hora
+
+// const prod3 = Object.create(Produto.prototype); //O objeto ja foi criado e já tem o construtor de Produto sem as chaves
+// prod3.nome = "Porta";
+// prod3.preco = 113; // Agora adicionamos a chave preco
+// prod3.aumento(2);
+// console.log(prod3);
+
+const prod3 = Object.create(Produto.prototype, {
+  nome: {
+    value: "TV",
+    enumerable: true
+  },
+  preco: {
+    value: 3249,
+    enumerable: true,
+    writable: true
+  },
+  tamanho: {
+    value: "55 Pol",
+    enumerable: true
+  }
+}); //O objeto ja foi criado e já tem o construtor de Produto e nos adicionamos as chaves com o valor dele e podemos adicionar
+//Muito parecido com quando herdamos de uma classe em c# e criamos um construtor com :Base e fazemos o nosso da nova classe
+prod3.aumento(10);
+prod3.desconto(1);
+console.log(prod3);
