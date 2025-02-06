@@ -1,5 +1,4 @@
 //Esta foi a minha forma de fazer uma verificação de CPF
-
 function formatarNumero(input) {
   let numero = input.value.replace(/\D/g, "");
 
@@ -32,11 +31,12 @@ function handleClick(callback) {
 function handleClick1(callback) {
   let verificador = document.getElementById("inputText").value;
   let cpf = verificador.replace(/[.,\-: ]/g, "");
+  let cpfArray = cpf.split("");
 
   if (cpf.length === 11) {
-    console.log("CPF Digitado: " + cpf);
+    console.log("Primeiro número " + cpfArray[0]);
   } else {
     callback();
-    setTimeout(() => handleClick(callback), 1000); // Recursão com delay
+    setTimeout(() => handleClick(callback), 1000);
   }
 }
