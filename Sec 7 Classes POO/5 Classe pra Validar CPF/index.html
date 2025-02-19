@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Validação de CPF</title>
+    <style>
+      .tooltip {
+        display: none;
+        position: absolute;
+        background-color: #f44336;
+        color: white;
+        padding: 5px;
+        border-radius: 5px;
+        z-index: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="text" id="cpf" placeholder="Digite seu CPF" />
+    <button onclick="validarCPF()">Validar CPF</button>
+    <div id="tooltip" class="tooltip"></div>
+
+    <script src="Script.js"></script>
+  </body>
+</html>
