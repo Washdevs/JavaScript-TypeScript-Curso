@@ -6,6 +6,7 @@ function rand(min, max) {
 
 function esperaAi(msg, tempo) {
   return new Promise((resolve, reject) => {
+    if (typeof msg !== "string") reject("Valor inválido");
     setTimeout(() => {
       resolve(msg);
     }, tempo);
@@ -23,16 +24,13 @@ esperaAi("Cheguei", rand(1, 5))
   })
   .then((resposta) => {
     console.log(resposta); //é quem imprime o valor do return de cima
-    return esperaAi("Terceiro Passo CallBack ", rand(1, 9)); //retorna a função com os valores
+    return esperaAi(6186551, rand(1, 9)); //retorna a função com os valores
   })
   .then((resposta) => {
     console.log(resposta); //mostra o valor do return de cima
   })
-  .then((erros, resposta) => {
-    console.log("Ultimo then"); //mostra o valor do return de cima
-  })
-  .catch((error) => {
-    console.error("Erro", error);
+  .catch((e) => {
+    console.error("Erro:", e);
   });
 
 //Passso a passo é funcção executa Cheguei então recebe uma arrow que retorna o valor da função esperaAi
