@@ -38,3 +38,25 @@ function esperaAi(msg, tempo) {
 //   .catch((e) => console.log(e));
 
 //Agora Usando as palavras Asyn e Await
+
+async function fasedojogo() {
+  try {
+    const fase1 = await esperaAi("Fase 1 ", rand());
+    console.log(fase1);
+    const fase2 = await esperaAi("Fase 2 ", rand());
+    console.log(fase2);
+    const fase3 = await esperaAi("Fase 3", rand());
+    console.log(fase3);
+    console.log("Terminamos na Fase: ", fase3);
+  } catch (e) {
+    console.log(e); // Se der erro ele vai para o catch então ele para a execução e mostra o erro
+  }
+}
+//Async permite usarmos a palavra await para esperar e promisse ser finalizada
+fasedojogo();
+
+/*Promisse tem 3 estados
+Pendente = Promise { <pending> }
+fullfield = Resolvida
+rejected = rejeitada
+*/
